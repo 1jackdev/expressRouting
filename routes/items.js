@@ -18,7 +18,30 @@ router.post("/", (req, res, next) => {
     if (!(name && price))
       throw new ExpressError("Please provide a name and price", 400);
     items.push({ name, price });
-    res.status(200).send({"added":{name,price}});
+    res.status(200).send({ added: { name, price } });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/:name", (req, res, next) => {
+  try {
+    const result = items.find(({ name, price }) => (name = req.params.name));
+    if (!result)
+      throw new ExpressError("No item with that name. Try again", 400);
+    res.status(200).send({ result });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.delete("/:name", (req, res, next) => {
+  try {
+    const result = items.find(({ name, price }) => (name = req.params.name));
+    if (!result)
+      throw new ExpressError("No item with that name. Try again", 400);
+    items.splice(items.indexOf(result), 1);
+    res.status(200).send({ message: "deleted" });
   } catch (err) {
     return next(err);
   }
